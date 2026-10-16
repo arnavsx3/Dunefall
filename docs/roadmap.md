@@ -8,7 +8,7 @@
 - [x] Add an honest executable scaffold and CLI smoke checks.
 - [x] Add formatting rules, a contributor workflow, and GitHub Actions.
 
-Workspace setup is complete. Gameplay implementation is now underway.
+Workspace setup is complete. All four gameplay milestones below are complete.
 
 ## 1. Particle world and sand
 
@@ -28,7 +28,9 @@ out-of-bounds access or more than one movement per particle per step.
 - [x] Introduce fixed simulation timing and terminal resize handling.
 
 Done when a user can build a wall and pile sand against it, then exit with the
-terminal settings and cursor restored. Verify exit and resize in a real terminal.
+terminal settings and cursor restored. Exit and resize are verified through
+pseudo-terminal checks; an interactive terminal run also verified painting,
+help, and Ctrl+C restoration.
 
 ## 3. Water and world controls
 
@@ -41,10 +43,10 @@ pause/reset work predictably without losing terminal control.
 
 ## 4. Polish
 
-- [ ] Measure representative world sizes and reduce unnecessary redraws.
+- [x] Measure representative world sizes and reduce unnecessary redraws.
 - [x] Add a useful help overlay and finalize documented controls.
-- [ ] Add a short demo recording and playable build instructions.
-- [ ] Validate graceful shutdown, small terminals, and piped input behavior.
+- [x] Add a short demo recording and playable build instructions.
+- [x] Validate graceful shutdown, small terminals, and piped input behavior.
 
 Defer extra materials, save files, and cross-platform terminal backends until the
 small sandbox is stable and enjoyable.

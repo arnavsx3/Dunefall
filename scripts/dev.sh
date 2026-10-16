@@ -54,7 +54,7 @@ Usage: ./scripts/dev.sh COMMAND [PRESET or application options]
   build [debug|release|sanitize]  Configure and build (default: debug)
   test  [debug|release|sanitize]  Configure, build, and run CTest
   check [debug|release|sanitize]  Check formatting, build, and run CTest
-  run [--help|--version]          Run the debug executable
+  run [application options]          Run the debug executable
   format                         Format C++ sources in place
   format-check                   Check C++ formatting without editing
 USAGE

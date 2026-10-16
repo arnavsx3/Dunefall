@@ -88,7 +88,7 @@ new tool behavior before pushing. CI uses the same bootstrap and check commands.
 
 ## Current verification
 
-CTest checks workspace startup, help, version, and rejection of unknown options.
+CTest runs eleven checks covering help, version, CLI errors, and the gameplay modules.
 Native physics and input tests plus pseudo-terminal tests cover the playable
 app, resize, exceptions, backpressure, and signal cleanup.
 GitHub Actions runs formatting, builds, and CTest on all three presets.

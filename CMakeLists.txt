@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(Dunefall VERSION 0.1.0 LANGUAGES CXX)
+project(Dunefall VERSION 0.2.0 LANGUAGES CXX)
 
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "Use an out-of-source build: cmake --preset debug")

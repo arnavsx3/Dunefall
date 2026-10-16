@@ -16,5 +16,5 @@
 - Do not commit `build/`, `.tools/`, credentials, or generated artifacts.
 - Update docs when behavior, setup, or controls change. State clearly which
   features exist and which are planned.
-- Stay within the current requested milestone. Initial workspace setup does not
-  authorize implementing gameplay.
+- Stay within the current requested milestone. Do not add deferred
+  materials, save files, or terminal backends without a new request.

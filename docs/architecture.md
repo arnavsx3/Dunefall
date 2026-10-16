@@ -1,59 +1,73 @@
 # Architecture
 
-## Direction
-
-Dunefall is a C++20 terminal application. Linux is the first supported runtime.
-Keep the simulation independent of the terminal so that physics can be tested
-without launching an interactive session.
-
-The playable application composes the simulation and terminal libraries. Physics
-advances at 30 fixed steps per second; rendering runs at up to 30 frames per
-second. A 100 ms catch-up cap prevents runaway work after slow output. Pause,
-help, and undersized terminals freeze the simulation. Resizing preserves the
-world and crops the viewport around the cursor. Rendering groups adjacent cells
-by color and caches rows, so unchanged frames emit no bytes and changes repaint
-only the affected rows. Explicit foreground colors also support light terminals.
+Dunefall is a C++20 terminal sandbox. Linux is the first supported runtime. The
+simulation is independent of terminal I/O and can run headlessly.
 
 ## Modules
 
 | Area | Responsibility | Dependencies |
 | --- | --- | --- |
-| `src/app/` | CLI, composition, simulation loop, user actions | Simulation and terminal interfaces once implemented |
-| `src/simulation/` | Grid, materials, collision and movement rules | C++ standard library only |
-| `src/terminal/` | Terminal lifetime, keyboard events, ANSI output, resize | C++ standard library and POSIX terminal APIs |
-| `include/dunefall/` | Small interfaces shared between modules | Avoid exposing operating-system details |
-| `tests/` | Automated noninteractive checks | CTest; simulation test targets as needed |
+| `src/app/` | CLI, composition, brush actions, fixed-step loop, headless mode | Simulation and terminal interfaces |
+| `src/simulation/` | Bounded grid, materials, movement rules, seeded demo | C++ standard library |
+| `src/terminal/` | Session lifetime, input decoding, ANSI output, viewport | Standard library and POSIX APIs |
+| `include/dunefall/` | Small interfaces shared between modules | Operating-system details stay in the terminal interface |
+| `tests/` | Native, CLI, timing, and pseudo-terminal checks | CTest and Python standard library |
 
-The application owns the world and terminal session. Input becomes explicit
-application actions; the simulation advances on a fixed timestep; the renderer
-receives a read-only world view. Rendering frequency must not change physics.
+CMake builds three libraries (`dunefall_simulation`, `dunefall_terminal`, and
+`dunefall_app`) plus the `dunefall` executable. First-party targets share C++20,
+strict compiler warnings, and optional sanitizers.
 
-## Simulation approach
+## Simulation
 
-Use a contiguous grid with explicit bounds and empty, wall, sand, and water
-materials. Update from the bottom upward, with controlled directional variation
-to avoid a persistent left or right bias. Use a reproducible random seed and
-prevent a particle from moving more than once in a simulation step.
+The world is a contiguous grid with explicit bounds. Cells are empty, sand,
+water, or wall. Bottom-up scans vary their horizontal direction using a seeded
+`std::mt19937`. Decisions use engine bits directly for reproducible replay.
 
-Water tries gravity, diagonals, then one horizontal cell. Sand swaps with water
-to sink; both particles are stamped so neither can move twice in one tick. Tests
-cover bounds, movement priority, containment, conservation, and seeded replay.
+Sand tries down, then diagonals in seeded order. Water tries down, diagonals,
+then adjacent horizontal cells. Sand can swap with water to sink; water cannot
+displace sand or walls. Per-cell tick stamps prevent particles from moving twice,
+including water pushed upward by sand. Walls and world edges contain particles.
 
-## Terminal approach
+Physics conserves each material. Editing is intentional: particles fill empty
+cells, walls can replace particles, and the eraser can remove any cell. Clear and
+demo reload reset the random engine and tick counter. Grid dimensions are bounded
+to 512 by 256; the interactive app initially fits the terminal up to 120 by 44.
 
-Use POSIX terminal input and ANSI output rather than introducing a game framework.
-A terminal-session object will restore terminal state and cursor visibility on
-normal exit, exceptions, and supported termination signals. Keep signal handlers
-minimal: request shutdown and let the normal control flow perform restoration.
-Do not promise recovery from uncatchable signals such as SIGKILL.
+## Application timing
 
-Check for an interactive terminal before enabling raw input. Handle terminal
-resize explicitly, cap catch-up work after long pauses, and avoid an unbounded
-busy loop. Defer these features until the terminal milestone.
+`FixedStep` accumulates elapsed time for 30 simulation steps per second. At most
+three catch-up steps can run per frame, even with leftover time before a stall.
+Rendering runs at up to 30 frames per second. The loop sleeps instead of spinning.
 
-## Build boundaries
+Pause, help, and undersized terminals discard accumulated time. Resuming never
+tries to replay the time spent paused. A single-step action advances physics
+once while paused. Painting and continuous spray are application actions; the
+simulation does not know about brushes or keyboard events.
 
-CMake builds `dunefall_simulation`, `dunefall_terminal`, `dunefall_app`, and the `dunefall` executable. Add simulation
-and terminal libraries when real code exists for them, rather than empty targets.
-The shared options target sets C++20, compiler warnings, and optional sanitizers.
-Build artifacts and tooling environments never belong in source control.
+## Terminal lifecycle and rendering
+
+`Session` checks terminal compatibility before changing state. It owns
+noncanonical input, nonblocking reads, saved input flags, alternate-screen mode,
+cursor visibility, and supported signal handlers. Normal exit, exceptions,
+SIGINT, SIGTERM, SIGHUP, and SIGQUIT restore the saved state. Signal handlers only
+request shutdown; ordinary control flow performs cleanup. SIGKILL cannot be handled.
+
+Input decoding preserves partial CSI and application-mode arrow sequences across
+reads. Both reads and catch-up work are bounded. Output handles partial writes
+and backpressure without ignoring shutdown requests.
+
+Each cell uses two terminal columns. Resizing preserves world dimensions and
+crops a viewport around the cursor. Below 42 columns by 12 rows, physics pauses
+and a resize message replaces the grid. Help fits the same minimum dimensions.
+
+The renderer uses explicit light foreground colors on a dark background, groups
+adjacent tiles by color, and caches rows. Only changed rows are emitted. Static
+paused frames generate no output; resize and layout changes force a full redraw.
+
+## Verification
+
+Tests cover boundaries, collisions, one-move-per-step behavior, mixed-material
+conservation, containment, reset and seeded replay, input sequences, viewport
+clamping, cached output, bounded timing, and public CLI errors. Pseudo-terminal
+checks drive the actual app and verify painting, erasing, pause, single-step,
+help, resize, demo reload, exceptions, output pressure, and terminal restoration.
