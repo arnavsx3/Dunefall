@@ -1,8 +1,8 @@
-# Terminal module (planned)
+# Terminal module
 
-Own terminal mode, nonblocking keyboard input, ANSI rendering, resize handling,
-and restoration on exit. The initial supported runtime is Linux with an
-interactive ANSI-compatible terminal. Use POSIX terminal APIs and C++ RAII.
+`Session` owns noncanonical input, nonblocking reads, the alternate screen, cursor
+visibility, and restoration. SIGINT, SIGTERM, SIGHUP, and SIGQUIT request orderly
+shutdown. Input decoding preserves fragmented arrow sequences across reads.
 
-Keep operating-system details here. Render a read-only view of the simulation;
-do not put particle rules in this module. See `docs/architecture.md`.
+Pseudo-terminal tests verify cleanup after normal exit, exceptions, and signals,
+as well as terminal size reporting. Rendering is the next application milestone.

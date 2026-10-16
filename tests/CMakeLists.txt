@@ -13,3 +13,14 @@ set_tests_properties(cli.reject_unknown_option PROPERTIES WILL_FAIL TRUE)
 add_executable(world_tests simulation/world_tests.cpp)
 target_link_libraries(world_tests PRIVATE dunefall_simulation)
 add_test(NAME simulation.world COMMAND world_tests)
+
+add_executable(input_tests terminal/input_tests.cpp)
+target_link_libraries(input_tests PRIVATE dunefall_terminal)
+add_test(NAME terminal.input COMMAND input_tests)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+add_executable(session_probe terminal/session_probe.cpp)
+target_link_libraries(session_probe PRIVATE dunefall_terminal)
+add_test(NAME terminal.session COMMAND "${Python3_EXECUTABLE}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/terminal/session_test.py" "$<TARGET_FILE:session_probe>")
+set_tests_properties(terminal.session PROPERTIES TIMEOUT 30)

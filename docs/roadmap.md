@@ -22,7 +22,7 @@ out-of-bounds access or more than one movement per particle per step.
 
 ## 2. First playable terminal sandbox
 
-- [ ] Add a terminal-session lifecycle with reliable restoration.
+- [x] Add a terminal-session lifecycle with reliable restoration.
 - [ ] Render the world using ANSI colors and a compact status bar.
 - [ ] Add cursor movement, sand painting, wall placement, and quit.
 - [ ] Introduce fixed simulation timing and terminal resize handling.

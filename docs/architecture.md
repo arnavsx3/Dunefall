@@ -7,8 +7,8 @@ Keep the simulation independent of the terminal so that physics can be tested
 without launching an interactive session.
 
 The executable currently prints workspace status, help, and version. The
-simulation library implements sand and walls with deterministic updates. Terminal
-interaction and the game loop are the next milestone.
+simulation library implements sand and walls with deterministic updates. The terminal library now handles
+session lifetime and keyboard decoding; rendering and the game loop are next.
 
 ## Modules
 
@@ -48,7 +48,7 @@ busy loop. Defer these features until the terminal milestone.
 
 ## Build boundaries
 
-CMake builds `dunefall_simulation`, `dunefall_app`, and the `dunefall` executable. Add simulation
+CMake builds `dunefall_simulation`, `dunefall_terminal`, `dunefall_app`, and the `dunefall` executable. Add simulation
 and terminal libraries when real code exists for them, rather than empty targets.
 The shared options target sets C++20, compiler warnings, and optional sanitizers.
 Build artifacts and tooling environments never belong in source control.
