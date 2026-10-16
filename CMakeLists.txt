@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.28)
+
+project(Dunefall VERSION 0.1.0 LANGUAGES CXX)
+
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  message(FATAL_ERROR "Use an out-of-source build: cmake --preset debug")
+endif()
+
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+option(DUNEFALL_WARNINGS_AS_ERRORS "Treat project compiler warnings as errors" ON)
+option(DUNEFALL_ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
+
+add_library(dunefall_options INTERFACE)
+target_compile_features(dunefall_options INTERFACE cxx_std_20)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  target_compile_options(dunefall_options INTERFACE -Wall -Wextra -Wpedantic -Wconversion -Wshadow)
+  if(DUNEFALL_WARNINGS_AS_ERRORS)
+    target_compile_options(dunefall_options INTERFACE -Werror)
+  endif()
+  if(DUNEFALL_ENABLE_SANITIZERS)
+    target_compile_options(dunefall_options INTERFACE -fsanitize=address,undefined -fno-omit-frame-pointer)
+    target_link_options(dunefall_options INTERFACE -fsanitize=address,undefined)
+  endif()
+elseif(MSVC)
+  target_compile_options(dunefall_options INTERFACE /W4)
+  if(DUNEFALL_WARNINGS_AS_ERRORS)
+    target_compile_options(dunefall_options INTERFACE /WX)
+  endif()
+  if(DUNEFALL_ENABLE_SANITIZERS)
+    message(FATAL_ERROR "The sanitizer preset currently requires GCC or Clang")
+  endif()
+endif()
+
+add_subdirectory(src)
+
+include(CTest)
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()

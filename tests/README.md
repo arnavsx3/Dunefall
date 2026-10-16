@@ -1,0 +1,9 @@
+# Tests
+
+CTest currently runs executable smoke checks for startup, help, version, and
+invalid arguments. No third-party test framework is required for this scaffold.
+
+When simulation work begins, add focused tests for grid bounds, conservation of
+particles, collisions, water flow, and deterministic updates. Tests must run
+without an interactive terminal. Terminal integration tests should exercise
+restoration and resize behavior separately.
