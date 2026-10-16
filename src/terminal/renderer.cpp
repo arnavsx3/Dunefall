@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <optional>
 #include <string_view>
 
 namespace dunefall::terminal {
@@ -53,7 +54,11 @@ void line(std::string& result, int row, std::string text, Size size) {
     if (text.size() > static_cast<std::size_t>(size.columns)) {
         text.resize(static_cast<std::size_t>(size.columns));
     }
-    result += "\x1b[" + std::to_string(row) + ";1H\x1b[0;48;5;234m\x1b[2K" + text;
+    result += "\x1b[" + std::to_string(row) + ";1H\x1b[0;38;5;252;48;5;234m\x1b[2K";
+    if (row == 1) {
+        result += "\x1b[1;38;5;117m";
+    }
+    result += text;
 }
 } // namespace
 
@@ -107,26 +112,57 @@ std::string render(const simulation::World& world, const View& view, Size size) 
     line(result, 3, border, size);
     for (int y = 0; y < area.height; ++y) {
         line(result, y + 4, "|", size);
+        std::optional<Material> previous_material;
         for (int x = 0; x < area.width; ++x) {
             const int world_x = x + area.x;
             const int world_y = y + area.y;
             const auto material = world.at(world_x, world_y);
             const bool cursor = world_x == view.cursor_x && world_y == view.cursor_y;
-            result += color(material);
+            if (!previous_material || *previous_material != material) {
+                result += color(material);
+                previous_material = material;
+            }
             if (cursor) {
                 result += "\x1b[38;5;231;48;5;60m<>\x1b[48;5;234m";
+                previous_material.reset();
             } else {
                 result += tile(material);
             }
         }
-        result += "\x1b[39m|";
+        result += "\x1b[38;5;245m|";
     }
     line(result, area.height + 4, border, size);
-    line(result, area.height + 5, "Arrows move | Space paint | Enter spray | +/- brush", size);
-    line(result, area.height + 6, "1 sand  2 water  3 wall  0 erase | P pause  ? help  Q quit",
-         size);
+    line(result, area.height + 5, "Arrows move | Space paint | Enter spray", size);
+    line(result, area.height + 6, "1/2/3/0 material | P pause | ? help Q quit", size);
     result += "\x1b[J";
     return result;
+}
+
+std::string Renderer::draw(const simulation::World& world, const View& view, Size size) {
+    const auto full = render(world, view, size);
+    std::vector<std::size_t> starts;
+    // Every row begins with an absolute cursor address. Styling and tile codes
+    // do not contain this suffix, so row boundaries stay independent of UTF-8.
+    for (auto marker = full.find(";1H"); marker != std::string::npos;
+         marker = full.find(";1H", marker + 3)) {
+        starts.push_back(full.rfind("\x1b[", marker));
+    }
+    std::vector<std::string> rows;
+    for (std::size_t i = 0; i < starts.size(); ++i) {
+        const auto end = i + 1 < starts.size() ? starts[i + 1] : full.size();
+        rows.push_back(full.substr(starts[i], end - starts[i]));
+    }
+    const bool reset = size.columns != previous_size_.columns || size.rows != previous_size_.rows ||
+                       rows.size() != previous_rows_.size();
+    std::string changed = reset ? "\x1b[2J" : "";
+    for (std::size_t i = 0; i < rows.size(); ++i) {
+        if (reset || rows[i] != previous_rows_[i]) {
+            changed += rows[i];
+        }
+    }
+    previous_size_ = size;
+    previous_rows_ = std::move(rows);
+    return changed;
 }
 
 } // namespace dunefall::terminal

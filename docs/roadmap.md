@@ -42,7 +42,7 @@ pause/reset work predictably without losing terminal control.
 ## 4. Polish
 
 - [ ] Measure representative world sizes and reduce unnecessary redraws.
-- [ ] Add a useful help overlay and finalize documented controls.
+- [x] Add a useful help overlay and finalize documented controls.
 - [ ] Add a short demo recording and playable build instructions.
 - [ ] Validate graceful shutdown, small terminals, and piped input behavior.
 

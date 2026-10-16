@@ -4,6 +4,7 @@
 #include "dunefall/terminal/session.hpp"
 
 #include <string>
+#include <vector>
 
 namespace dunefall::terminal {
 
@@ -27,5 +28,14 @@ struct Viewport {
 [[nodiscard]] bool usable(Size size) noexcept;
 [[nodiscard]] Viewport viewport(const simulation::World& world, const View& view, Size size);
 [[nodiscard]] std::string render(const simulation::World& world, const View& view, Size size);
+
+class Renderer {
+  public:
+    std::string draw(const simulation::World& world, const View& view, Size size);
+
+  private:
+    Size previous_size_{0, 0};
+    std::vector<std::string> previous_rows_;
+};
 
 } // namespace dunefall::terminal

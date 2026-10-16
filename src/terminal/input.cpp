@@ -1,11 +1,12 @@
 #include "dunefall/terminal/input.hpp"
 
+#include <cctype>
 #include <optional>
 
 namespace dunefall::terminal {
 namespace {
 std::optional<Key> character(char value) {
-    switch (value) {
+    switch (std::tolower(static_cast<unsigned char>(value))) {
     case 'k':
         return Key::up;
     case 'j':

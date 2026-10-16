@@ -10,7 +10,9 @@ The playable application composes the simulation and terminal libraries. Physics
 advances at 30 fixed steps per second; rendering runs at up to 30 frames per
 second. A 100 ms catch-up cap prevents runaway work after slow output. Pause,
 help, and undersized terminals freeze the simulation. Resizing preserves the
-world and crops the viewport around the cursor.
+world and crops the viewport around the cursor. Rendering groups adjacent cells
+by color and caches rows, so unchanged frames emit no bytes and changes repaint
+only the affected rows. Explicit foreground colors also support light terminals.
 
 ## Modules
 

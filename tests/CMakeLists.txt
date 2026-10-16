@@ -32,3 +32,7 @@ set_tests_properties(terminal.game PROPERTIES TIMEOUT 30)
 add_test(NAME app.cli COMMAND "${Python3_EXECUTABLE}"
   "${CMAKE_CURRENT_SOURCE_DIR}/app/cli_test.py" "$<TARGET_FILE:dunefall>")
 set_tests_properties(app.cli PROPERTIES TIMEOUT 45)
+
+add_executable(renderer_tests terminal/renderer_tests.cpp)
+target_link_libraries(renderer_tests PRIVATE dunefall_terminal)
+add_test(NAME terminal.renderer COMMAND renderer_tests)

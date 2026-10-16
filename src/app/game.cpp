@@ -45,6 +45,7 @@ int play(std::uint32_t seed, bool empty) {
     view.cursor_x = world.width() / 2;
     view.cursor_y = std::min(3, world.height() - 1);
     terminal::Input input;
+    terminal::Renderer renderer;
     bool quit = false;
     using Clock = std::chrono::steady_clock;
     constexpr auto tick = std::chrono::nanoseconds(1'000'000'000 / 30);
@@ -135,7 +136,7 @@ int play(std::uint32_t seed, bool empty) {
                 accumulated -= tick;
             }
         }
-        session.write(terminal::render(world, view, size));
+        session.write(renderer.draw(world, view, size));
         std::this_thread::sleep_until(start + frame);
     }
     return session.signal() == 0 ? 0 : 128 + session.signal();

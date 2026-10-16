@@ -26,6 +26,10 @@ int main() {
             input.feed("hjkl") != std::vector{Key::left, Key::down, Key::up, Key::right}) {
             throw std::runtime_error("Unknown sequences must not leak into shortcuts");
         }
+        if (input.feed("PCDNQ") !=
+            std::vector{Key::pause, Key::clear, Key::demo, Key::step, Key::quit}) {
+            throw std::runtime_error("Uppercase shortcuts must match displayed controls");
+        }
         std::cout << "Input: fragmented sequences, arrows, shortcuts, and unknown keys passed\n";
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
