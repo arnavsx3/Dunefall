@@ -73,7 +73,17 @@ void Session::restore() noexcept {
     if (screen_) {
         constexpr std::string_view ending = "\x1b[0m\x1b[?7h\x1b[?25h\x1b[?1049l";
         // Best effort: cleanup must never throw while unwinding an exception.
-        (void)::write(STDOUT_FILENO, ending.data(), ending.size());
+        std::size_t sent = 0;
+        while (sent < ending.size()) {
+            const auto count = ::write(STDOUT_FILENO, ending.data() + sent, ending.size() - sent);
+            if (count > 0) {
+                sent += static_cast<std::size_t>(count);
+            } else if (count < 0 && errno == EINTR) {
+                continue;
+            } else {
+                break;
+            }
+        }
         screen_ = false;
     }
     while (installed_signals_ > 0) {
