@@ -89,5 +89,6 @@ new tool behavior before pushing. CI uses the same bootstrap and check commands.
 ## Current verification
 
 CTest checks workspace startup, help, version, and rejection of unknown options.
-Physics and interactive terminal checks will be added with those features.
+Native physics and input tests plus pseudo-terminal tests cover the playable
+app, resize, exceptions, backpressure, and signal cleanup.
 GitHub Actions runs formatting, builds, and CTest on all three presets.

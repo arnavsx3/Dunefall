@@ -1,6 +1,6 @@
-add_library(dunefall_app STATIC app.cpp)
+add_library(dunefall_app STATIC app.cpp game.cpp)
 target_include_directories(dunefall_app PUBLIC "${PROJECT_SOURCE_DIR}/include")
-target_link_libraries(dunefall_app PUBLIC dunefall_options)
+target_link_libraries(dunefall_app PUBLIC dunefall_options dunefall_simulation dunefall_terminal)
 target_compile_definitions(dunefall_app PRIVATE DUNEFALL_VERSION="${PROJECT_VERSION}")
 
 add_executable(dunefall main.cpp)

@@ -23,9 +23,9 @@ out-of-bounds access or more than one movement per particle per step.
 ## 2. First playable terminal sandbox
 
 - [x] Add a terminal-session lifecycle with reliable restoration.
-- [ ] Render the world using ANSI colors and a compact status bar.
-- [ ] Add cursor movement, sand painting, wall placement, and quit.
-- [ ] Introduce fixed simulation timing and terminal resize handling.
+- [x] Render the world using ANSI colors and a compact status bar.
+- [x] Add cursor movement, sand painting, wall placement, and quit.
+- [x] Introduce fixed simulation timing and terminal resize handling.
 
 Done when a user can build a wall and pile sand against it, then exit with the
 terminal settings and cursor restored. Verify exit and resize in a real terminal.
@@ -33,7 +33,7 @@ terminal settings and cursor restored. Verify exit and resize in a real terminal
 ## 3. Water and world controls
 
 - [ ] Add water gravity, lateral flow, and defined sand/water interactions.
-- [ ] Add material selection, erase, pause/resume, and world reset.
+- [x] Add material selection, erase, pause/resume, and world reset.
 - [ ] Cover containment, flow, and mixed-material conservation with tests.
 
 Done when water flows around a sand pile and stays contained by walls, and

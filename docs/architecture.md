@@ -6,9 +6,11 @@ Dunefall is a C++20 terminal application. Linux is the first supported runtime.
 Keep the simulation independent of the terminal so that physics can be tested
 without launching an interactive session.
 
-The executable currently prints workspace status, help, and version. The
-simulation library implements sand and walls with deterministic updates. The terminal library now handles
-session lifetime and keyboard decoding; rendering and the game loop are next.
+The playable application composes the simulation and terminal libraries. Physics
+advances at 30 fixed steps per second; rendering runs at up to 30 frames per
+second. A 100 ms catch-up cap prevents runaway work after slow output. Pause,
+help, and undersized terminals freeze the simulation. Resizing preserves the
+world and crops the viewport around the cursor.
 
 ## Modules
 

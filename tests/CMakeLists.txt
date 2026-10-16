@@ -1,5 +1,5 @@
-add_test(NAME cli.workspace COMMAND dunefall)
-set_tests_properties(cli.workspace PROPERTIES PASS_REGULAR_EXPRESSION "Workspace ready")
+add_test(NAME cli.reject_noninteractive COMMAND dunefall)
+set_tests_properties(cli.reject_noninteractive PROPERTIES WILL_FAIL TRUE)
 
 add_test(NAME cli.help COMMAND dunefall --help)
 set_tests_properties(cli.help PROPERTIES PASS_REGULAR_EXPRESSION "Usage: dunefall")
@@ -24,3 +24,7 @@ target_link_libraries(session_probe PRIVATE dunefall_terminal)
 add_test(NAME terminal.session COMMAND "${Python3_EXECUTABLE}"
   "${CMAKE_CURRENT_SOURCE_DIR}/terminal/session_test.py" "$<TARGET_FILE:session_probe>")
 set_tests_properties(terminal.session PROPERTIES TIMEOUT 30)
+
+add_test(NAME terminal.game COMMAND "${Python3_EXECUTABLE}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/terminal/game_test.py" "$<TARGET_FILE:dunefall>")
+set_tests_properties(terminal.game PROPERTIES TIMEOUT 30)

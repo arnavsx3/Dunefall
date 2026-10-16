@@ -58,7 +58,8 @@ def run_case(executable, action, expected_code):
         os.close(slave)
 
 
-for action, code in [(b"q", 0), (b"x", 1), (signal.SIGINT, 130),
-                     (signal.SIGTERM, 143), (signal.SIGHUP, 129), (signal.SIGQUIT, 131)]:
-    run_case(sys.argv[1], action, code)
-print("Terminal restoration, exceptions, resize, and four shutdown signals passed")
+if __name__ == "__main__":
+    for action, code in [(b"q", 0), (b"x", 1), (signal.SIGINT, 130),
+                         (signal.SIGTERM, 143), (signal.SIGHUP, 129), (signal.SIGQUIT, 131)]:
+        run_case(sys.argv[1], action, code)
+    print("Terminal restoration, exceptions, resize, and four shutdown signals passed")

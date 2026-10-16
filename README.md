@@ -5,9 +5,8 @@ A tiny world of sand, water, and beautiful chaos.
 Dunefall is a terminal physics playground written in C++20. The goal is to
 sprinkle sand, pour water, and build little worlds that react in real time.
 
-**Current status:** the development workspace is ready. The executable is a
-startup scaffold with `--help` and `--version`; particle physics, rendering,
-and interactive controls are planned next.
+**Current status:** playable sand sandbox with walls, colored rendering, keyboard
+painting, brush sizes, pause, single-step, clear, and a demo scene. Water is next.
 
 ## Get started
 
@@ -37,8 +36,8 @@ Dunefall/
 ├── scripts/                # Tool bootstrap and developer commands
 ├── src/
 │   ├── app/                # Entry point and application coordination
-│   ├── simulation/         # Particle engine (planned)
-│   └── terminal/           # Input, rendering, terminal lifecycle (planned)
+│   ├── simulation/         # Deterministic particle engine
+│   └── terminal/           # Input, rendering, terminal lifecycle
 ├── tests/                  # CTest checks; future simulation tests
 ├── tools/                  # Pinned, hash-verified developer tool versions
 ├── CMakeLists.txt          # Build targets and compiler settings
@@ -66,3 +65,21 @@ Generated files stay in ignored `build/` and `.tools/` directories.
 
 See the [roadmap](docs/roadmap.md), [architecture](docs/architecture.md),
 [development guide](docs/development.md), and [contribution guide](CONTRIBUTING.md).
+
+## Playing
+
+Run `./scripts/dev.sh run` in an interactive terminal (at least 42 x 12).
+
+| Key | Action |
+| --- | --- |
+| Arrows / `h j k l` | Move the brush |
+| Space / Enter | Paint once / toggle continuous spray |
+| `1` / `3` / `0` | Select sand / wall / eraser |
+| `+` / `-` | Increase / decrease brush size |
+| `p` / `n` | Pause / advance one step while paused |
+| `c` / `d` | Clear / reload demo |
+| `?` / `q` | Help / quit |
+
+Use `./scripts/dev.sh run --empty --seed 7` for an empty, reproducible world.
+Resizing crops the view around the cursor without deleting the world. A terminal
+below the minimum size pauses physics until resized. Ctrl+C exits safely too.
