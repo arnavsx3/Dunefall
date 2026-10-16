@@ -36,3 +36,7 @@ set_tests_properties(app.cli PROPERTIES TIMEOUT 45)
 add_executable(renderer_tests terminal/renderer_tests.cpp)
 target_link_libraries(renderer_tests PRIVATE dunefall_terminal)
 add_test(NAME terminal.renderer COMMAND renderer_tests)
+
+add_executable(clock_tests app/clock_tests.cpp)
+target_link_libraries(clock_tests PRIVATE dunefall_app)
+add_test(NAME app.clock COMMAND clock_tests)

@@ -1,4 +1,5 @@
 #include "dunefall/app.hpp"
+#include "dunefall/app/clock.hpp"
 #include "dunefall/simulation/scenes.hpp"
 #include "dunefall/simulation/world.hpp"
 #include "dunefall/terminal/input.hpp"
@@ -48,10 +49,9 @@ int play(std::uint32_t seed, bool empty) {
     terminal::Renderer renderer;
     bool quit = false;
     using Clock = std::chrono::steady_clock;
-    constexpr auto tick = std::chrono::nanoseconds(1'000'000'000 / 30);
     constexpr auto frame = std::chrono::nanoseconds(1'000'000'000 / 30);
     auto previous = Clock::now();
-    auto accumulated = Clock::duration::zero();
+    FixedStep physics_clock;
     while (!quit && session.signal() == 0) {
         const auto start = Clock::now();
         const auto size = session.size();
@@ -121,20 +121,15 @@ int play(std::uint32_t seed, bool empty) {
             view.cursor_x = std::clamp(view.cursor_x, 0, world.width() - 1);
             view.cursor_y = std::clamp(view.cursor_y, 0, world.height() - 1);
         }
-        accumulated += std::min(start - previous, Clock::duration(std::chrono::milliseconds(100)));
+        const auto elapsed = std::chrono::duration_cast<FixedStep::Duration>(start - previous);
         previous = start;
-        if (view.paused || view.help || !terminal::usable(size)) {
-            accumulated = Clock::duration::zero();
-        } else {
-            // At most three catch-up steps after a slow frame; rendering cannot
-            // accelerate physics, and long stalls cannot create a runaway loop.
-            while (accumulated >= tick) {
-                if (view.spraying) {
-                    paint(world, view);
-                }
-                world.step();
-                accumulated -= tick;
+        const auto steps =
+            physics_clock.advance(elapsed, view.paused || view.help || !terminal::usable(size));
+        for (int i = 0; i < steps; ++i) {
+            if (view.spraying) {
+                paint(world, view);
             }
+            world.step();
         }
         session.write(renderer.draw(world, view, size));
         std::this_thread::sleep_until(start + frame);
