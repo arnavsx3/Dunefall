@@ -1,0 +1,17 @@
+# Generated builds and checkout-local developer tools
+/build/
+/.tools/
+/compile_commands.json
+/CMakeUserPresets.json
+
+# Editor and operating-system files
+/.idea/
+/.vscode/
+*.swp
+*~
+.DS_Store
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example

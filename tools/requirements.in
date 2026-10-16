@@ -1,0 +1,5 @@
+# Build-time tools only; the application is entirely C++.
+# Regenerate the hashed lock with the command in docs/development.md.
+cmake>=3.28,<5
+ninja>=1.11,<2
+clang-format>=19,<24
