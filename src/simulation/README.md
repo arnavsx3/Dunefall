@@ -1,7 +1,9 @@
-# Simulation module (planned)
+# Simulation module
 
-Own the particle grid, materials, deterministic random seed, and fixed simulation
-steps. This module must not depend on terminal input, output, or frame timing.
+`World` owns a bounded contiguous grid, seeded randomness, materials, and fixed
+simulation steps. Sand falls down first, then tries diagonals in seeded order.
+The bottom-up scan and destination stamps permit at most one move per particle
+per step. Walls are immovable and world edges contain particles.
 
-Start with empty cells, walls, and sand. Add water only after sand movement and
-boundary behavior are covered by focused tests. See `docs/roadmap.md`.
+Bounds, gravity, collision, conservation, replay, and reset are covered by
+`tests/simulation/world_tests.cpp`. Water is the next simulation milestone.

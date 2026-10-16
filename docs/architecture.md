@@ -6,8 +6,9 @@ Dunefall is a C++20 terminal application. Linux is the first supported runtime.
 Keep the simulation independent of the terminal so that physics can be tested
 without launching an interactive session.
 
-The initial executable only prints workspace status, help, and version. The
-module boundaries below describe the intended game; they are not implemented yet.
+The executable currently prints workspace status, help, and version. The
+simulation library implements sand and walls with deterministic updates. Terminal
+interaction and the game loop are the next milestone.
 
 ## Modules
 
@@ -47,7 +48,7 @@ busy loop. Defer these features until the terminal milestone.
 
 ## Build boundaries
 
-CMake currently builds `dunefall_app` and the `dunefall` executable. Add simulation
+CMake builds `dunefall_simulation`, `dunefall_app`, and the `dunefall` executable. Add simulation
 and terminal libraries when real code exists for them, rather than empty targets.
 The shared options target sets C++20, compiler warnings, and optional sanitizers.
 Build artifacts and tooling environments never belong in source control.

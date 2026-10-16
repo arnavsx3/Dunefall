@@ -9,3 +9,7 @@ set_tests_properties(cli.version PROPERTIES PASS_REGULAR_EXPRESSION "Dunefall ${
 
 add_test(NAME cli.reject_unknown_option COMMAND dunefall --unknown-option)
 set_tests_properties(cli.reject_unknown_option PROPERTIES WILL_FAIL TRUE)
+
+add_executable(world_tests simulation/world_tests.cpp)
+target_link_libraries(world_tests PRIVATE dunefall_simulation)
+add_test(NAME simulation.world COMMAND world_tests)

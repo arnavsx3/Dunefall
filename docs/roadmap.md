@@ -8,14 +8,14 @@
 - [x] Add an honest executable scaffold and CLI smoke checks.
 - [x] Add formatting rules, a contributor workflow, and GitHub Actions.
 
-Stop here for the initial setup request. The game is not implemented in this milestone.
+Workspace setup is complete. Gameplay implementation is now underway.
 
 ## 1. Particle world and sand
 
-- [ ] Introduce grid dimensions, cells, and empty/wall/sand materials.
-- [ ] Add safe access, placement, and deterministic simulation steps.
-- [ ] Implement falling and diagonal sand movement.
-- [ ] Test edges, walls, movement order, and particle conservation.
+- [x] Introduce grid dimensions, cells, and empty/wall/sand materials.
+- [x] Add safe access, placement, and deterministic simulation steps.
+- [x] Implement falling and diagonal sand movement.
+- [x] Test edges, walls, movement order, and particle conservation.
 
 Done when a seeded world evolves reproducibly in noninteractive tests, with no
 out-of-bounds access or more than one movement per particle per step.
