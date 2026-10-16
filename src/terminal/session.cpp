@@ -124,7 +124,21 @@ void Session::write(std::string_view text) const {
         if (count > 0) {
             text.remove_prefix(static_cast<std::size_t>(count));
         } else if (count < 0 && errno == EINTR) {
-            continue;
+            if (caught_signal != 0) {
+                return;
+            }
+        } else if (count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+            // stdin and stdout can share a nonblocking file description. Wait
+            // for output capacity while still responding to shutdown signals.
+            pollfd output{STDOUT_FILENO, POLLOUT, 0};
+            const auto ready = ::poll(&output, 1, 50);
+            if (caught_signal != 0) {
+                return;
+            }
+            if ((ready < 0 && errno != EINTR) ||
+                (output.revents & (POLLHUP | POLLERR | POLLNVAL)) != 0) {
+                throw std::runtime_error("Terminal output disconnected");
+            }
         } else {
             throw std::runtime_error("Could not write terminal output");
         }

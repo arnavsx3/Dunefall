@@ -8,6 +8,7 @@ int main() {
     try {
         dunefall::terminal::Session session;
         session.write("SESSION_READY");
+        session.write(std::string(32768, '.'));
         while (session.signal() == 0) {
             const auto input = session.read_input();
             if (input.find('q') != std::string::npos) {
