@@ -1,52 +1,49 @@
 #include "dunefall/app.hpp"
+#include "dunefall/app/options.hpp"
 
-#include <charconv>
 #include <exception>
 #include <iostream>
-#include <string_view>
+#include <stdexcept>
+#include <vector>
 
 namespace dunefall {
 
 int run(int argc, char* argv[]) {
-    std::uint32_t seed = 42;
-    bool empty = false;
+    std::vector<std::string_view> arguments;
     for (int i = 1; i < argc; ++i) {
-        const std::string_view argument{argv[i]};
-        if (argument == "--help") {
-            std::cout
-                << "Usage: dunefall [--empty] [--seed NUMBER] [--help | --version]\n\n"
-                << "A tiny world of sand, water, and beautiful chaos.\n\n"
-                << "  --empty        Start with an empty world instead of the demo\n"
-                << "  --seed NUMBER  Reproduce a simulation (default: 42)\n"
-                << "  --help         Show this message\n"
-                << "  --version      Show the project version\n\n"
-                << "Arrows/hjkl move | Space paint | Enter spray | 1 sand | 2 water | 3 wall\n"
-                << "0 erase | +/- brush | P pause | N step | C clear | D demo | ? help | Q quit\n";
-            return 0;
-        }
-        if (argument == "--version" && argc == 2) {
-            std::cout << "Dunefall " << DUNEFALL_VERSION << '\n';
-            return 0;
-        }
-        if (argument == "--empty") {
-            empty = true;
-            continue;
-        }
-        if (argument == "--seed" && i + 1 < argc) {
-            const std::string_view value{argv[++i]};
-            const auto [end, error] =
-                std::from_chars(value.data(), value.data() + value.size(), seed);
-            if (error == std::errc{} && end == value.data() + value.size()) {
-                continue;
-            }
-            std::cerr << "Seed must be an unsigned 32-bit integer.\n";
-            return 2;
-        }
-        std::cerr << "Unsupported or incomplete option: " << argument << ". Run --help.\n";
+        arguments.emplace_back(argv[i]);
+    }
+    Options options;
+    try {
+        options = parse_options(arguments);
+    } catch (const std::invalid_argument& error) {
+        std::cerr << "Dunefall: " << error.what() << ". Run --help.\n";
         return 2;
     }
+    if (options.help) {
+        std::cout << "Usage: dunefall [OPTIONS]\n\n"
+                  << "A tiny world of sand, water, and beautiful chaos.\n\n"
+                  << "  --empty        Start empty instead of loading the demo\n"
+                  << "  --seed N       Unsigned 32-bit simulation seed (default: 42)\n"
+                  << "  --headless     Print an ASCII snapshot without a terminal\n"
+                  << "  --benchmark    Measure physics throughput without rendering\n"
+                  << "  --width N      Headless world width: 1..512 (default: 64)\n"
+                  << "  --height N     Headless world height: 1..256 (default: 24)\n"
+                  << "  --steps N      Headless ticks: 0..100000 (default: 120)\n"
+                  << "  --help         Show this message\n"
+                  << "  --version      Show the project version\n\n"
+                  << "Arrows/hjkl move | Space paint | Enter spray | 1 sand | 2 water | 3 wall\n"
+                  << "0 erase | +/- brush | P pause | N step | C clear | D demo | ? help | Q quit\n"
+                  << "Headless legend: . empty, s sand, w water, # wall.\n";
+        return 0;
+    }
+    if (options.version) {
+        std::cout << "Dunefall " << DUNEFALL_VERSION << '\n';
+        return 0;
+    }
     try {
-        return play(seed, empty);
+        return options.headless ? run_headless(options, std::cout)
+                                : play(options.seed, options.empty);
     } catch (const std::exception& error) {
         std::cerr << "Dunefall: " << error.what() << '\n';
         return 1;

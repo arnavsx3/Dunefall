@@ -84,3 +84,12 @@ Run `./scripts/dev.sh run` in an interactive terminal (at least 42 x 12).
 Use `./scripts/dev.sh run --empty --seed 7` for an empty, reproducible world.
 Resizing crops the view around the cursor without deleting the world. A terminal
 below the minimum size pauses physics until resized. Ctrl+C exits safely too.
+
+## Without a terminal
+
+```bash
+./scripts/dev.sh run --headless --width 40 --height 16 --steps 120 --seed 7
+./scripts/dev.sh run --benchmark --steps 1000
+```
+
+Snapshots are reproducible and use `. s w #` for empty, sand, water, and walls.

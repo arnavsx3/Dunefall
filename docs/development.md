@@ -92,3 +92,19 @@ CTest checks workspace startup, help, version, and rejection of unknown options.
 Native physics and input tests plus pseudo-terminal tests cover the playable
 app, resize, exceptions, backpressure, and signal cleanup.
 GitHub Actions runs formatting, builds, and CTest on all three presets.
+
+## Headless snapshots and benchmarks
+
+These modes work without an interactive terminal and emit no ANSI escapes:
+
+```bash
+./scripts/dev.sh run --headless --seed 7 --width 40 --height 16 --steps 120
+./scripts/dev.sh build release
+./build/release/bin/dunefall --benchmark --width 120 --height 44 --steps 1000
+```
+
+Snapshots use `.` for empty, `s` for sand, `w` for water, and `#` for walls.
+The same seed, dimensions, scene, and step count reproduce the same snapshot.
+Dimensions and step count flags require `--headless` or `--benchmark`. Width is
+limited to 512, height to 256, and step count to 100000. Benchmarks measure only
+physics, excluding scene construction, printing, and terminal rendering.

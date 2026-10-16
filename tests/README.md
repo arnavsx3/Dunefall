@@ -15,3 +15,7 @@ dependency; the game itself is C++.
 
 `terminal/game_test.py` drives the playable app: painting, brush sizes, pause,
 help, clear, demo reload, resize, and safe shutdown.
+
+`app/cli_test.py` checks invalid options, unsigned seed limits, safe rejection of
+noninteractive gameplay, headless snapshots, deterministic replay, material
+conservation, and benchmark output.

@@ -28,3 +28,7 @@ set_tests_properties(terminal.session PROPERTIES TIMEOUT 30)
 add_test(NAME terminal.game COMMAND "${Python3_EXECUTABLE}"
   "${CMAKE_CURRENT_SOURCE_DIR}/terminal/game_test.py" "$<TARGET_FILE:dunefall>")
 set_tests_properties(terminal.game PROPERTIES TIMEOUT 30)
+
+add_test(NAME app.cli COMMAND "${Python3_EXECUTABLE}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/app/cli_test.py" "$<TARGET_FILE:dunefall>")
+set_tests_properties(app.cli PROPERTIES TIMEOUT 45)
