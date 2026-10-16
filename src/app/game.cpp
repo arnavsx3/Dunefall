@@ -1,4 +1,5 @@
 #include "dunefall/app.hpp"
+#include "dunefall/simulation/scenes.hpp"
 #include "dunefall/simulation/world.hpp"
 #include "dunefall/terminal/input.hpp"
 #include "dunefall/terminal/renderer.hpp"
@@ -13,24 +14,6 @@ namespace {
 using simulation::Material;
 using simulation::World;
 using terminal::Key;
-
-void demo(World& world) {
-    world.clear();
-    for (int x = 0; x < world.width(); ++x) {
-        world.set(x, world.height() - 1, Material::wall);
-    }
-    for (int x = 2; x < world.width() / 3; ++x) {
-        world.set(x, world.height() / 2, Material::wall);
-        world.set(world.width() - 1 - x, world.height() / 2, Material::wall);
-    }
-    for (int y = 0; y < world.height() / 3; ++y) {
-        for (int x = world.width() / 2 - y; x <= world.width() / 2 + y; ++x) {
-            if (world.contains(x, y)) {
-                world.set(x, y, Material::sand);
-            }
-        }
-    }
-}
 
 void paint(World& world, const terminal::View& view) {
     for (int dy = -view.radius; dy <= view.radius; ++dy) {
@@ -56,7 +39,7 @@ int play(std::uint32_t seed, bool empty) {
     World world(std::clamp((initial.columns - 2) / 2, 20, 120),
                 std::clamp(initial.rows - 6, 10, 44), seed);
     if (!empty) {
-        demo(world);
+        simulation::load_demo(world);
     }
     terminal::View view;
     view.cursor_x = world.width() / 2;
@@ -97,7 +80,8 @@ int play(std::uint32_t seed, bool empty) {
                 view.material = Material::wall;
                 break;
             case Key::water:
-                break; // Introduced in the water milestone.
+                view.material = Material::water;
+                break;
             case Key::erase:
                 view.material = Material::empty;
                 break;
@@ -109,7 +93,7 @@ int play(std::uint32_t seed, bool empty) {
                 view.spraying = false;
                 break;
             case Key::demo:
-                demo(world);
+                simulation::load_demo(world);
                 view.spraying = false;
                 break;
             case Key::step:

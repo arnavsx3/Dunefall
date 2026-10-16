@@ -7,7 +7,7 @@
 
 namespace dunefall::simulation {
 
-enum class Material : std::uint8_t { empty, sand, wall };
+enum class Material : std::uint8_t { empty, sand, water, wall };
 
 class World {
   public:

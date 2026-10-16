@@ -1,3 +1,4 @@
+#include "dunefall/simulation/scenes.hpp"
 #include "dunefall/simulation/world.hpp"
 
 #include <iostream>
@@ -100,6 +101,68 @@ void conservation_and_replay() {
     reset.step();
     require(first.cells() == reset.cells(), "Clear resets the random sequence");
 }
+
+void water_flow() {
+    World falling(5, 5);
+    falling.set(2, 0, Material::water);
+    falling.step();
+    require(falling.at(2, 1) == Material::water, "Water falls one row per step");
+    World lateral(5, 1);
+    lateral.set(2, 0, Material::water);
+    lateral.step();
+    require(lateral.at(1, 0) == Material::water || lateral.at(3, 0) == Material::water,
+            "Blocked water spreads exactly one cell sideways");
+    require(lateral.count(Material::water) == 1, "Sideways movement conserves water");
+    World sink(1, 3);
+    sink.set(0, 0, Material::sand);
+    sink.set(0, 1, Material::water);
+    sink.set(0, 2, Material::wall);
+    sink.step();
+    require(sink.at(0, 0) == Material::water && sink.at(0, 1) == Material::sand,
+            "Sand sinks through water and displaces it upward once");
+    sink.step();
+    require(sink.at(0, 1) == Material::sand && sink.count(Material::water) == 1,
+            "Water cannot displace sand and blocked columns stay stable");
+}
+
+void mixed_conservation() {
+    World first(29, 20, 987);
+    World second(29, 20, 987);
+    dunefall::simulation::load_demo(first);
+    dunefall::simulation::load_demo(second);
+    const auto sand = first.count(Material::sand);
+    const auto water = first.count(Material::water);
+    const auto walls = first.count(Material::wall);
+    require(sand > 0 && water > 0 && walls > 0, "Demo includes all materials");
+    for (int i = 0; i < 1000; ++i) {
+        first.step();
+        second.step();
+        require(first.count(Material::sand) == sand, "Mixed runs conserve sand");
+        require(first.count(Material::water) == water, "Mixed runs conserve water");
+        require(first.count(Material::wall) == walls, "Mixed runs preserve walls");
+        require(first.cells() == second.cells(), "Mixed worlds replay deterministically");
+    }
+    World basin(8, 8);
+    for (int y = 0; y < 8; ++y) {
+        for (int x = 0; x < 8; ++x) {
+            if (x == 0 || x == 7 || y == 0 || y == 7) {
+                basin.set(x, y, Material::wall);
+            } else if (y < 4) {
+                basin.set(x, y, Material::water);
+            }
+        }
+    }
+    const auto contained = basin.count(Material::water);
+    for (int i = 0; i < 300; ++i) {
+        basin.step();
+    }
+    require(basin.count(Material::water) == contained && basin.count(Material::wall) == 28,
+            "A closed wall basin contains every water particle");
+    World tiny(1, 1);
+    dunefall::simulation::load_demo(tiny);
+    tiny.step();
+    require(tiny.at(0, 0) == Material::wall, "Demo is safe at minimum dimensions");
+}
 } // namespace
 
 int main() {
@@ -108,7 +171,10 @@ int main() {
         gravity();
         collision();
         conservation_and_replay();
-        std::cout << "World: bounds, gravity, collisions, conservation, replay, and reset passed\n";
+        water_flow();
+        mixed_conservation();
+        std::cout << "World: bounds, gravity, collisions, conservation, replay, reset, water, "
+                     "sinking, and containment passed\n";
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';
         return 1;

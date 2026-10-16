@@ -56,8 +56,12 @@ bool World::move(int x, int y, int target_x, int target_y) {
     }
     const auto from = index(x, y);
     const auto to = index(target_x, target_y);
-    if (cells_[to] != Material::empty) {
+    const bool sinking = cells_[from] == Material::sand && cells_[to] == Material::water;
+    if (cells_[to] != Material::empty && !sinking) {
         return false;
+    }
+    if (sinking && updated_[to] == tick_) {
+        return false; // A displaced water particle must not move twice this tick.
     }
     std::swap(cells_[from], cells_[to]);
     updated_[from] = tick_;
@@ -77,14 +81,21 @@ void World::step() {
         const bool reverse = (random_() & 1U) != 0;
         for (int column = 0; column < width_; ++column) {
             const int x = reverse ? width_ - 1 - column : column;
-            if (cells_[index(x, y)] != Material::sand || updated_[index(x, y)] == tick_) {
+            const auto material = cells_[index(x, y)];
+            if ((material != Material::sand && material != Material::water) ||
+                updated_[index(x, y)] == tick_) {
                 continue;
             }
             const int direction = (random_() & 1U) != 0 ? 1 : -1;
             if (move(x, y, x, y + 1) || move(x, y, x + direction, y + 1)) {
                 continue;
             }
-            move(x, y, x - direction, y + 1);
+            if (move(x, y, x - direction, y + 1)) {
+                continue;
+            }
+            if (material == Material::water && !move(x, y, x + direction, y)) {
+                move(x, y, x - direction, y);
+            }
         }
     }
 }

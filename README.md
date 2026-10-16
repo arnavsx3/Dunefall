@@ -5,8 +5,9 @@ A tiny world of sand, water, and beautiful chaos.
 Dunefall is a terminal physics playground written in C++20. The goal is to
 sprinkle sand, pour water, and build little worlds that react in real time.
 
-**Current status:** playable sand sandbox with walls, colored rendering, keyboard
-painting, brush sizes, pause, single-step, clear, and a demo scene. Water is next.
+**Current status:** playable sand-and-water sandbox with walls, colored rendering, keyboard
+painting, brush sizes, pause, single-step, clear, and a mixed sand/water demo.
+Water flows around walls and sand sinks through it.
 
 ## Get started
 
@@ -74,7 +75,7 @@ Run `./scripts/dev.sh run` in an interactive terminal (at least 42 x 12).
 | --- | --- |
 | Arrows / `h j k l` | Move the brush |
 | Space / Enter | Paint once / toggle continuous spray |
-| `1` / `3` / `0` | Select sand / wall / eraser |
+| `1` / `2` / `3` / `0` | Select sand / water / wall / eraser |
 | `+` / `-` | Increase / decrease brush size |
 | `p` / `n` | Pause / advance one step while paused |
 | `c` / `d` | Clear / reload demo |

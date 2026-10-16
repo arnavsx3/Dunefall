@@ -21,6 +21,8 @@ for shutdown in [b"q", signal.SIGINT]:
         read_until(master, b"DUNEFALL", process)
         os.write(master, b"p1 ")
         read_until(master, b"PAUSED | SAND | brush 1 | sand 1", process)
+        os.write(master, b"l2 ")
+        read_until(master, b"PAUSED | WATER | brush 1 | sand 1 | water 1", process)
         os.write(master, b"+3 \x1b[A\x1b[D")
         read_until(master, b"PAUSED | WALL | brush 3", process)
         os.write(master, b"?")

@@ -11,6 +11,8 @@ std::string_view label(Material material) {
     switch (material) {
     case Material::sand:
         return "SAND";
+    case Material::water:
+        return "WATER";
     case Material::wall:
         return "WALL";
     case Material::empty:
@@ -22,6 +24,8 @@ std::string_view color(Material material) {
     switch (material) {
     case Material::sand:
         return "\x1b[38;5;222m";
+    case Material::water:
+        return "\x1b[38;5;75m";
     case Material::wall:
         return "\x1b[38;5;245m";
     case Material::empty:
@@ -33,6 +37,8 @@ std::string_view tile(Material material) {
     switch (material) {
     case Material::sand:
         return "░░";
+    case Material::water:
+        return "≈≈";
     case Material::wall:
         return "██";
     case Material::empty:
@@ -72,12 +78,15 @@ std::string render(const simulation::World& world, const View& view, Size size) 
         return result;
     }
     if (view.help) {
-        constexpr std::array help{
-            "THE MATERIAL LAB / controls",       "",
-            "Arrows / h j k l   Move brush",     "Space paint | Enter toggle spray",
-            "1 sand | 3 wall | 0 / e erase",     "+ / - brush | P pause | N single step",
-            "C clear | D reload demo",           "? close help | Q / Ctrl+C quit",
-            "Physics pauses while help is open."};
+        constexpr std::array help{"THE MATERIAL LAB / controls",
+                                  "",
+                                  "Arrows / h j k l   Move brush",
+                                  "Space paint | Enter toggle spray",
+                                  "1 sand | 2 water | 3 wall | 0 erase",
+                                  "+ / - brush | P pause | N single step",
+                                  "C clear | D reload demo",
+                                  "? close help | Q / Ctrl+C quit",
+                                  "Physics pauses while help is open."};
         for (std::size_t i = 0; i < help.size(); ++i) {
             line(result, static_cast<int>(i) + 3, help[i], size);
         }
@@ -88,6 +97,7 @@ std::string render(const simulation::World& world, const View& view, Size size) 
     std::string status = std::string(view.paused ? "PAUSED" : "RUNNING") + " | " +
                          std::string(label(view.material)) + " | brush " +
                          std::to_string(2 * view.radius + 1) + " | sand " + std::to_string(sand) +
+                         " | water " + std::to_string(world.count(Material::water)) +
                          (view.spraying ? " | SPRAY ON" : "") + " | tick " +
                          std::to_string(world.ticks());
     line(result, 2, status, size);
@@ -113,7 +123,8 @@ std::string render(const simulation::World& world, const View& view, Size size) 
     }
     line(result, area.height + 4, border, size);
     line(result, area.height + 5, "Arrows move | Space paint | Enter spray | +/- brush", size);
-    line(result, area.height + 6, "1 sand  3 wall  0 erase | P pause  ? help  Q quit", size);
+    line(result, area.height + 6, "1 sand  2 water  3 wall  0 erase | P pause  ? help  Q quit",
+         size);
     result += "\x1b[J";
     return result;
 }

@@ -28,13 +28,14 @@ receives a read-only world view. Rendering frequency must not change physics.
 
 ## Simulation approach
 
-Use a contiguous grid with explicit bounds. Begin with empty, wall, and sand
+Use a contiguous grid with explicit bounds and empty, wall, sand, and water
 materials. Update from the bottom upward, with controlled directional variation
 to avoid a persistent left or right bias. Use a reproducible random seed and
 prevent a particle from moving more than once in a simulation step.
 
-Test boundary behavior and particle conservation before adding water. Document
-movement priority and update-order decisions beside the corresponding tests.
+Water tries gravity, diagonals, then one horizontal cell. Sand swaps with water
+to sink; both particles are stamped so neither can move twice in one tick. Tests
+cover bounds, movement priority, containment, conservation, and seeded replay.
 
 ## Terminal approach
 

@@ -32,9 +32,9 @@ terminal settings and cursor restored. Verify exit and resize in a real terminal
 
 ## 3. Water and world controls
 
-- [ ] Add water gravity, lateral flow, and defined sand/water interactions.
+- [x] Add water gravity, lateral flow, and defined sand/water interactions.
 - [x] Add material selection, erase, pause/resume, and world reset.
-- [ ] Cover containment, flow, and mixed-material conservation with tests.
+- [x] Cover containment, flow, and mixed-material conservation with tests.
 
 Done when water flows around a sand pile and stays contained by walls, and
 pause/reset work predictably without losing terminal control.

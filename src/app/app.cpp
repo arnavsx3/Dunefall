@@ -15,12 +15,12 @@ int run(int argc, char* argv[]) {
         if (argument == "--help") {
             std::cout
                 << "Usage: dunefall [--empty] [--seed NUMBER] [--help | --version]\n\n"
-                << "A tiny world of sand and beautiful chaos.\n\n"
+                << "A tiny world of sand, water, and beautiful chaos.\n\n"
                 << "  --empty        Start with an empty world instead of the demo\n"
                 << "  --seed NUMBER  Reproduce a simulation (default: 42)\n"
                 << "  --help         Show this message\n"
                 << "  --version      Show the project version\n\n"
-                << "Arrows/hjkl move | Space paint | Enter spray | 1 sand | 3 wall\n"
+                << "Arrows/hjkl move | Space paint | Enter spray | 1 sand | 2 water | 3 wall\n"
                 << "0 erase | +/- brush | P pause | N step | C clear | D demo | ? help | Q quit\n";
             return 0;
         }
